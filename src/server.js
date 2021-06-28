@@ -1,7 +1,8 @@
 require('dotenv').config()
 const Hapi = require('@hapi/hapi')
-const SongsService = require('./services/postgres/SongsService')
 const songs = require('./api/songs')
+const SongsService = require('./services/postgres/SongsService')
+const SongsValidate = require('./validator/songs')
 
 const init = async () => {
   const songsService = new SongsService()
@@ -19,7 +20,8 @@ const init = async () => {
     {
       plugin: songs,
       options: {
-        service: songsService
+        service: songsService,
+        validate: SongsValidate
       }
     }
   ])

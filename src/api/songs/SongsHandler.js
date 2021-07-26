@@ -11,13 +11,31 @@ class SongsHandler {
     this.getSongDetailHandler = this.getSongDetailHandler.bind(this)
   }
 
-  async getSongsHandler () {
-    const result = await this._service.getSongs()
-    return {
-      status: 'success',
-      data: {
-        songs: result
+  async getSongsHandler (request, h) {
+    try {
+      const result = await this._service.getSongs()
+      return {
+        status: 'success',
+        data: {
+          songs: result
+        }
       }
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message
+        })
+        response.code(error.statusCode)
+        return response
+      }
+      console.log(error)
+      const response = h.response({
+        status: 'error',
+        message: error.message
+      })
+      response.code(500)
+      return response
     }
   }
 
@@ -45,6 +63,7 @@ class SongsHandler {
         response.code(error.statusCode)
         return response
       }
+      console.log(error)
       const response = h.response({
         status: 'error',
         message: error.message
@@ -75,6 +94,7 @@ class SongsHandler {
         response.code(error.statusCode)
         return response
       }
+      console.log(error)
       const response = h.response({
         status: 'error',
         message: error.message
@@ -104,6 +124,7 @@ class SongsHandler {
         response.code(error.statusCode)
         return response
       }
+      console.log(error)
       const response = h.response({
         status: 'error',
         message: error.message
@@ -130,6 +151,7 @@ class SongsHandler {
         response.code(error.statusCode)
         return response
       }
+      console.log(error)
       const response = h.response({
         status: 'error',
         message: error.message

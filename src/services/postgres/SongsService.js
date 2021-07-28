@@ -62,6 +62,16 @@ class SongsService {
       throw new NotFoundError('lagu tidak ditemukan')
     }
   }
+
+  async verifySong (id) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE id=$1',
+      values: [id]
+    }
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) throw new InvariantError('Lagu gagal ditambahkan ke playlist')
+  }
 }
 
 module.exports = SongsService

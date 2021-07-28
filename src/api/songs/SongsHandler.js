@@ -1,9 +1,10 @@
 const ClientError = require('../../exceptions/ClientError')
 
 class SongsHandler {
-  constructor (service, validate) {
+  constructor (service, validator) {
     this._service = service
-    this._validate = validate
+    this._validator = validator
+
     this.getSongsHandler = this.getSongsHandler.bind(this)
     this.postSongHandler = this.postSongHandler.bind(this)
     this.editSongHandler = this.editSongHandler.bind(this)
@@ -42,7 +43,7 @@ class SongsHandler {
   async postSongHandler (request, h) {
     try {
       const { payload } = request
-      this._validate.songValidateSchema(payload)
+      this._validator.songPostValidate(payload)
       const songId = await this._service.addSong(payload)
 
       const response = h.response({
@@ -108,7 +109,7 @@ class SongsHandler {
     try {
       const { id } = request.params
       const { payload } = request
-      this._validate.songValidateSchema(payload)
+      this._validator.songPostValidate(payload)
       await this._service.editSong(id, payload)
 
       return {

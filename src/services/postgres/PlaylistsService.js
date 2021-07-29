@@ -5,8 +5,9 @@ const InvariantError = require('../../exceptions/InvariantError')
 const AuthorizationError = require('../../exceptions/AuthorizationError')
 
 class PlaylistsService {
-  constructor () {
+  constructor (collaborationsService) {
     this._pool = new Pool()
+    this._collaborationsService = collaborationsService
   }
 
   async addPlaylist ({ name, owner }) {
@@ -26,9 +27,11 @@ class PlaylistsService {
       text: `
         SELECT playlists.id, playlists.name, users.username
         FROM playlists
+        LEFT JOIN collaborations
+        ON collaborations.playlist_id = playlists.id 
         LEFT JOIN users
         ON users.id = playlists.owner
-        WHERE playlists.owner = $1
+        WHERE playlists.owner = $1 OR collaborations.user_id = $1
       `,
       values: [owner]
     }
@@ -45,7 +48,7 @@ class PlaylistsService {
     if (!result.rowCount) throw new InvariantError('Playlist gagal dihapus, data tidak ada')
   }
 
-  async verifyPlaylistAccess (pid, owner) {
+  async verifyPlaylistOwner (pid, owner) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id=$1',
       values: [pid]
@@ -56,6 +59,20 @@ class PlaylistsService {
 
     const playlist = result.rows[0]
     if (playlist.owner !== owner) throw new AuthorizationError('Anda tidak berhak mengakses resource ini')
+  }
+
+  async verifyPlaylistAccess (pid, owner) {
+    try {
+      await this.verifyPlaylistOwner(pid, owner)
+    } catch (error) {
+      if (error instanceof NotFoundError) throw error
+
+      try {
+        await this._collaborationsService.verifyPlaylistCollaborator(pid, owner)
+      } catch {
+        throw error
+      }
+    }
   }
 }
 

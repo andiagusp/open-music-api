@@ -85,11 +85,7 @@ class PlaylistsHandler {
       const { playlistId } = request.params
       const { id: owner } = request.auth.credentials
 
-<<<<<<< HEAD
-      await this._playlistsService.verifyPlaylistAccess(playlistId, owner)
-=======
       await this._playlistsService.verifyPlaylistOwner(playlistId, owner)
->>>>>>> 831805842375aa6ef9d173b6d3c9be7bc5df7dab
       await this._playlistsService.deletePlaylist(playlistId)
 
       return ({
@@ -157,11 +153,7 @@ class PlaylistsHandler {
       const { id: owner } = request.auth.credentials
 
       await this._playlistsService.verifyPlaylistAccess(playlistId, owner)
-<<<<<<< HEAD
-      const songs = await this._playlistSongsService.getPlaylistSongs(playlistId, owner)
-=======
       const songs = await this._playlistSongsService.getSongFromPlaylist(playlistId, owner)
->>>>>>> 831805842375aa6ef9d173b6d3c9be7bc5df7dab
 
       return ({
         status: 'success',

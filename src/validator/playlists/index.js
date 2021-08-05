@@ -15,4 +15,8 @@ const PlaylistsValidator = {
   }
 }
 
+<<<<<<< HEAD
 module.exports = PlaylistsValidator
+=======
+module.exports = PlaylistsValidator
+>>>>>>> 831805842375aa6ef9d173b6d3c9be7bc5df7dab

@@ -17,7 +17,7 @@ class PlaylistSongsService {
     if (!result.rowCount) throw new InvariantError('Data gagal ditambahkan')
   }
 
-  async getPlaylistSongs (pid, owner) {
+  async getSongFromPlaylist (pid, owner) {
     const query = {
       text: `
         SELECT songs.id, songs.title, songs.performer
@@ -26,7 +26,10 @@ class PlaylistSongsService {
         ON playlistsongs.song_id = songs.id
         LEFT JOIN playlists
         ON playlistsongs.playlist_id = playlists.id
-        WHERE playlistsongs.playlist_id = $1 AND playlists.owner = $2
+        LEFT JOIN collaborations
+        ON collaborations.user_id = $2
+        WHERE playlistsongs.playlist_id = $1
+        AND (playlists.owner = $2 OR collaborations.user_id = $2)
       `,
       values: [pid, owner]
     }

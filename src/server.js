@@ -1,6 +1,7 @@
 require('dotenv').config()
 const Jwt = require('@hapi/jwt')
 const Hapi = require('@hapi/hapi')
+const Inert = require('@hapi/inert')
 
 const plugins = require('./plugins')
 
@@ -15,7 +16,10 @@ const init = async () => {
     }
   })
 
-  await server.register([{ plugin: Jwt }])
+  await server.register([
+    { plugin: Jwt },
+    { plugin: Inert }
+  ])
 
   server.auth.strategy('music_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
